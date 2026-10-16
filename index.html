@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valoración de riesgo (6 categorías)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 700px; }
+    h1 { margin-bottom: 0.2rem; }
+    .category { margin: 0.6rem 0; display:flex; align-items:center; gap:1rem; }
+    label { flex: 1; }
+    select { width: 5rem; padding: 0.25rem; }
+    .result { margin-top: 1rem; padding: 1rem; border-radius: 6px; }
+    .no-risk { background:#e6ffea; border:1px solid #7bd389; color:#0f6b2e; }
+    .low { background:#fff9e6; border:1px solid #ffd36b; color:#7a5b00; }
+    .moderate { background:#fff0e6; border:1px solid #ffb28a; color:#8a3b00; }
+    .high { background:#ffe6e6; border:1px solid #ff8a8a; color:#7a1d1d; }
+    .very-high { background:#ffdfe6; border:1px solid #ff6b9a; color:#6b1037; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; margin-top: 0.6rem; }
+    .note { font-size:0.9rem; color:#555; margin-top:0.6rem; }
+  </style>
+</head>
+<body>
+  <h1>Valoración de riesgo</h1>
+  <p>Valora cada categoría de 1 (peor) a 4 (mejor).</p>
+
+  <div id="form">
+    <div class="category">
+      <label for="c1">1. Percepción sensorial</label>
+      <select id="c1" aria-label="Percepción sensorial">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <label for="c2">2. Exposición a la humedad</label>
+      <select id="c2" aria-label="Exposición a la humedad">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <label for="c3">3. Nivel de actividad</label>
+      <select id="c3" aria-label="Nivel de actividad">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <label for="c4">4. Movilidad</label>
+      <select id="c4" aria-label="Movilidad">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <label for="c5">5. Estado nutricional</label>
+      <select id="c5" aria-label="Estado nutricional">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <label for="c6">6. Fricción y cizalla</label>
+      <select id="c6" aria-label="Fricción y cizalla">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+      </select>
+    </div>
+
+    <button id="calcBtn">Calcular</button>
+
+    <div id="output" class="result" style="display:none"></div>
+
+    <p class="note">Rangos de interpretación proporcionados: 19–23 no hay riesgo; 15–18 riesgo leve; 13–14 riesgo moderado; 10–12 riesgo alto; ≤9 riesgo muy alto.</p>
+    <p class="note">Observación: 6 categorías × 4 puntos = máximo 24; si obtienes 24 se mostrará "No hay riesgo". Si deseas que el máximo sea 23, puedo ajustar la escala.</p>
+  </div>
+
+  <script>
+    function interpretar(total) {
+      // Usamos exactamente los rangos que indicaste.
+      if (total >= 19 && total <= 23) return {text: "No hay riesgo", cls: "no-risk"};
+      if (total >= 15 && total <= 18) return {text: "Riesgo leve", cls: "low"};
+      if (total >= 13 && total <= 14) return {text: "Riesgo moderado", cls: "moderate"};
+      if (total >= 10 && total <= 12) return {text: "Riesgo alto", cls: "high"};
+      if (total <= 9) return {text: "Riesgo muy alto", cls: "very-high"};
+      // Si total == 24 (por la discrepancia) lo tratamos como "No hay riesgo"
+      if (total === 24) return {text: "No hay riesgo", cls: "no-risk"};
+      return {text: "No clasificado", cls: ""};
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', function() {
+      const vals = [1,2,3,4,5,6].map(i => {
+        return parseInt(document.getElementById('c' + i).value, 10) || 0;
+      });
+      const total = vals.reduce((a,b)=>a+b,0);
+      const interp = interpretar(total);
+      const out = document.getElementById('output');
+      out.style.display = 'block';
+      out.className = 'result ' + interp.cls;
+      out.innerHTML = '<strong>Puntuación total:</strong> ' + total + '<br/><strong>Interpretación:</strong> ' + interp.text;
+    });
+
+    // Inicializa valores por defecto (todos 1) — opcional: poner 4 para valores buenos
+    (function init(){ /* deja por defecto */ })();
+  </script>
+</body>
+</html>
