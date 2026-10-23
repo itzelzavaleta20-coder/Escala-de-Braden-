@@ -6,8 +6,10 @@
   <title>Hoja de Evaluación - Escala de Braden</title>
   <style>
     :root {
-      --bg: #eef5ff;
-      --paper: #ffffff;
+      --bg-1: #edf6ff;
+      --bg-2: #f5f0e6;
+      --bg-3: #ebfaf4;
+      --paper: #fffdf8;
       --ink: #1d2b39;
       --muted: #607084;
       --border: #dfe7f1;
@@ -36,7 +38,7 @@
 
     body {
       margin: 0;
-      background: linear-gradient(180deg, #edf4ff 0%, #f7f9fc 100%);
+      background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
       color: var(--ink);
       font-family: Arial, Helvetica, sans-serif;
       padding: 28px 16px;
@@ -65,6 +67,33 @@
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .scale-banner {
+      padding: 24px 24px 10px;
+      background: linear-gradient(180deg, rgba(15, 95, 216, 0.03), rgba(15, 95, 216, 0.01));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scale-banner h1 {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #0d5bd7, #5aa6ff, #0d5bd7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+    }
+
+    .scale-description {
+      margin: 12px auto 0;
+      max-width: 860px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
     }
 
     .report-info {
@@ -288,9 +317,20 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .footer-note strong { color: var(--ink); }
+
+    #realizadoPor {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-width: 220px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: white;
+    }
 
     .legend {
       margin-top: 18px;
@@ -362,6 +402,15 @@
       <span>Escala de Braden</span>
     </div>
 
+    <div class="scale-banner">
+      <h1>Escala de Braden</h1>
+      <div class="scale-description">
+        Herramienta clínica utilizada para evaluar el riesgo de que un paciente desarrolle úlceras por presión.
+        Ayuda a identificar factores relacionados con la percepción sensorial, humedad, actividad, movilidad,
+        nutrición y fricción/cizalla.
+      </div>
+    </div>
+
     <div class="report-info">
       <div class="fields">
         <div class="field">
@@ -379,6 +428,10 @@
         <div class="field">
           <label>Servicio / Área</label>
           <input type="text" id="servicio" placeholder="Servicio / Área" />
+        </div>
+        <div class="field">
+          <label>Realizada por</label>
+          <input type="text" id="realizadoPor" placeholder="Nombre del evaluador" />
         </div>
       </div>
     </div>
@@ -405,7 +458,7 @@
       </div>
 
       <div class="footer-note">
-        <span><strong>Realizada por:</strong> Itzel Zavaleta Lázaro</span>
+        <span><strong>Realizada por:</strong> <span id="nombreEvaluador">--</span></span>
         <span id="fechaFooter">Fecha: --</span>
       </div>
     </div>
@@ -478,6 +531,8 @@
     const resultBox = document.getElementById('resultBox');
     const fechaInput = document.getElementById('fecha');
     const fechaFooter = document.getElementById('fechaFooter');
+    const realizadoPorInput = document.getElementById('realizadoPor');
+    const nombreEvaluador = document.getElementById('nombreEvaluador');
 
     function buildForm() {
       categories.forEach((category) => {
@@ -527,7 +582,7 @@
           label.addEventListener('click', () => {
             document.querySelectorAll(`input[name="${category.key}"]`).forEach((el) => {
               const parent = el.closest('.option');
-              parent.classList.remove('selected');
+              if (parent) parent.classList.remove('selected');
             });
             input.checked = true;
             label.classList.add('selected');
@@ -549,6 +604,11 @@
       return { text: 'Riesgo muy alto', className: 'very-high' };
     }
 
+    function updateEvaluatorName() {
+      const value = realizadoPorInput.value.trim();
+      nombreEvaluador.textContent = value || '--';
+    }
+
     function calculate() {
       let total = 0;
       categories.forEach((category) => {
@@ -566,6 +626,7 @@
       if (fechaInput.value) {
         fechaFooter.textContent = 'Fecha: ' + fechaInput.value;
       }
+      updateEvaluatorName();
     }
 
     function resetForm() {
@@ -586,9 +647,12 @@
       }
     });
 
+    realizadoPorInput.addEventListener('input', updateEvaluatorName);
+
     buildForm();
     fechaInput.value = new Date().toISOString().split('T')[0];
     fechaFooter.textContent = 'Fecha: ' + fechaInput.value;
+    updateEvaluatorName();
   </script>
 </body>
 </html>
