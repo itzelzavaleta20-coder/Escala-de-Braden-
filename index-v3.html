@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hoja de Evaluación - Escala de Braden</title>
+  <style>
+    :root {
+      --bg: #eef5ff;
+      --paper: #ffffff;
+      --ink: #1d2b39;
+      --muted: #607084;
+      --border: #dfe7f1;
+      --primary: #0f5fd8;
+      --primary-soft: #eaf3ff;
+      --primary-border: #9cc3ff;
+      --green-soft: #e8f9ee;
+      --green-border: #9dd7b4;
+      --green-text: #1f6b42;
+      --yellow-soft: #fff7d9;
+      --yellow-border: #f0d16b;
+      --yellow-text: #7a5600;
+      --orange-soft: #fff0dc;
+      --orange-border: #f7c16b;
+      --orange-text: #8b5300;
+      --red-soft: #ffe5e3;
+      --red-border: #f0a09a;
+      --red-text: #8d1f17;
+      --blue-soft: #eaf3ff;
+      --blue-border: #9cc2ff;
+      --blue-text: #194d99;
+      --shadow: 0 18px 40px rgba(16, 54, 94, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #edf4ff 0%, #f7f9fc 100%);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 28px 16px;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      padding: 14px 18px;
+      background: linear-gradient(90deg, #0d5bd7, #5aa6ff, #0d5bd7);
+      color: white;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .report-info {
+      padding: 22px 24px 6px;
+      border-bottom: 1px solid var(--border);
+      background: #f9fbff;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .field input {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      padding: 10px 12px;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 95, 216, 0.12);
+    }
+
+    .content {
+      padding: 18px 24px 24px;
+    }
+
+    .categories {
+      display: grid;
+      gap: 18px;
+    }
+
+    .category {
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--primary);
+      background: #f9fbff;
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+    }
+
+    .category-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .option {
+      position: relative;
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 12px 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      min-height: 120px;
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15, 95, 216, 0.07);
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px rgba(15,95,216,0.08);
+    }
+
+    .score-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-weight: 900;
+      font-size: 1rem;
+      background: linear-gradient(135deg, var(--primary), #69aaff);
+      color: white;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    .check-mark {
+      font-weight: 900;
+      color: var(--primary);
+      opacity: 0;
+      font-size: 1.1rem;
+      transition: 0.15s ease;
+    }
+
+    .option.selected .check-mark {
+      opacity: 1;
+    }
+
+    .option-text {
+      color: var(--ink);
+      font-size: 0.94rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .actions {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 11px;
+      padding: 12px 24px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .btn-calc {
+      background: linear-gradient(135deg, var(--primary), #5aa7ff);
+      color: white;
+      box-shadow: 0 10px 20px rgba(15,95,216,0.25);
+    }
+
+    .btn-print {
+      background: #eef5ff;
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+
+    .result-box {
+      display: none;
+      margin-top: 22px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      padding: 18px 14px;
+      text-align: center;
+      font-size: 1.04rem;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .result-box.visible { display: block; }
+
+    .result-box.no-risk {
+      background: var(--blue-soft);
+      border-color: var(--blue-border);
+      color: var(--blue-text);
+    }
+
+    .result-box.low {
+      background: var(--green-soft);
+      border-color: var(--green-border);
+      color: var(--green-text);
+    }
+
+    .result-box.moderate {
+      background: var(--yellow-soft);
+      border-color: var(--yellow-border);
+      color: var(--yellow-text);
+    }
+
+    .result-box.high {
+      background: var(--orange-soft);
+      border-color: var(--orange-border);
+      color: var(--orange-text);
+    }
+
+    .result-box.very-high {
+      background: var(--red-soft);
+      border-color: var(--red-border);
+      color: var(--red-text);
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-note strong { color: var(--ink); }
+
+    .legend {
+      margin-top: 18px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+
+    .legend strong { color: var(--ink); }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .chip.no-risk { background: var(--blue-soft); border-color: var(--blue-border); color: var(--blue-text); }
+    .chip.low { background: var(--green-soft); border-color: var(--green-border); color: var(--green-text); }
+    .chip.moderate { background: var(--yellow-soft); border-color: var(--yellow-border); color: var(--yellow-text); }
+    .chip.high { background: var(--orange-soft); border-color: var(--orange-border); color: var(--orange-text); }
+    .chip.very-high { background: var(--red-soft); border-color: var(--red-border); color: var(--red-text); }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .toolbar,
+      .actions,
+      .btn-print {
+        display: none !important;
+      }
+
+      .page {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        max-width: none;
+      }
+
+      .report-info {
+        background: #fff;
+      }
+
+      .category {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="toolbar">
+      <span>Hoja de Evaluación</span>
+      <span>Escala de Braden</span>
+    </div>
+
+    <div class="report-info">
+      <div class="fields">
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" id="fecha" />
+        </div>
+        <div class="field">
+          <label>Paciente</label>
+          <input type="text" id="paciente" placeholder="Nombre del paciente" />
+        </div>
+        <div class="field">
+          <label>Edad</label>
+          <input type="text" id="edad" placeholder="Edad" />
+        </div>
+        <div class="field">
+          <label>Servicio / Área</label>
+          <input type="text" id="servicio" placeholder="Servicio / Área" />
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="categories" class="categories"></div>
+
+      <div class="actions">
+        <button id="calcBtn" class="btn-calc" type="button">Calcular riesgo</button>
+        <button id="printBtn" class="btn-print" type="button">Imprimir</button>
+      </div>
+
+      <div id="resultBox" class="result-box"></div>
+
+      <div class="legend">
+        <strong>Interpretación:</strong>
+        <div class="legend-row">
+          <span class="chip no-risk">19–23: Sin riesgo</span>
+          <span class="chip low">15–18: Riesgo leve</span>
+          <span class="chip moderate">13–14: Riesgo moderado</span>
+          <span class="chip high">10–12: Riesgo alto</span>
+          <span class="chip very-high">9 o menos: Riesgo muy alto</span>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span><strong>Realizada por:</strong> Itzel Zavaleta Lázaro</span>
+        <span id="fechaFooter">Fecha: --</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const categories = [
+      {
+        label: '1. Percepción sensorial',
+        key: 'percepcion',
+        options: {
+          1: 'Completamente limitada',
+          2: 'Muy limitada',
+          3: 'Ligeramente limitada',
+          4: 'Sin limitaciones'
+        }
+      },
+      {
+        label: '2. Exposición a la humedad',
+        key: 'humedad',
+        options: {
+          1: 'Constantemente húmedo',
+          2: 'Muy húmedo',
+          3: 'Ligeramente húmedo',
+          4: 'Raramente húmedo'
+        }
+      },
+      {
+        label: '3. Nivel de actividad',
+        key: 'actividad',
+        options: {
+          1: 'Encamado',
+          2: 'En silla',
+          3: 'Camina con ayuda',
+          4: 'Camina libremente'
+        }
+      },
+      {
+        label: '4. Movilidad',
+        key: 'movilidad',
+        options: {
+          1: 'Completamente inmóvil',
+          2: 'Muy limitado',
+          3: 'Ligeramente limitado',
+          4: 'Sin limitaciones'
+        }
+      },
+      {
+        label: '5. Estado nutricional',
+        key: 'nutricional',
+        options: {
+          1: 'Muy pobre',
+          2: 'Probablemente inadecuada',
+          3: 'Adecuada',
+          4: 'Excelente'
+        }
+      },
+      {
+        label: '6. Fricción y cizalla',
+        key: 'friccion',
+        options: {
+          1: 'Requiere ayuda para moverse',
+          2: 'Se mueve débilmente y necesita ayuda',
+          3: 'Se moviliza de forma independiente'
+        }
+      }
+    ];
+
+    const categoriesContainer = document.getElementById('categories');
+    const resultBox = document.getElementById('resultBox');
+    const fechaInput = document.getElementById('fecha');
+    const fechaFooter = document.getElementById('fechaFooter');
+
+    function buildForm() {
+      categories.forEach((category) => {
+        const card = document.createElement('div');
+        card.className = 'category';
+
+        const title = document.createElement('p');
+        title.className = 'category-title';
+        title.textContent = category.label;
+        card.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'option-grid';
+
+        Object.keys(category.options).forEach((value) => {
+          const label = document.createElement('label');
+          label.className = 'option';
+          label.dataset.category = category.key;
+
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = category.key;
+          input.value = value;
+
+          const top = document.createElement('div');
+          top.className = 'score-line';
+
+          const score = document.createElement('span');
+          score.className = 'score';
+          score.textContent = value;
+
+          const check = document.createElement('span');
+          check.className = 'check-mark';
+          check.textContent = '✓';
+
+          top.appendChild(score);
+          top.appendChild(check);
+
+          const text = document.createElement('div');
+          text.className = 'option-text';
+          text.textContent = category.options[value];
+
+          label.appendChild(input);
+          label.appendChild(top);
+          label.appendChild(text);
+
+          label.addEventListener('click', () => {
+            document.querySelectorAll(`input[name="${category.key}"]`).forEach((el) => {
+              const parent = el.closest('.option');
+              parent.classList.remove('selected');
+            });
+            input.checked = true;
+            label.classList.add('selected');
+          });
+
+          grid.appendChild(label);
+        });
+
+        card.appendChild(grid);
+        categoriesContainer.appendChild(card);
+      });
+    }
+
+    function interpret(total) {
+      if (total >= 19 && total <= 23) return { text: 'No hay riesgo', className: 'no-risk' };
+      if (total >= 15 && total <= 18) return { text: 'Riesgo leve', className: 'low' };
+      if (total >= 13 && total <= 14) return { text: 'Riesgo moderado', className: 'moderate' };
+      if (total >= 10 && total <= 12) return { text: 'Riesgo alto', className: 'high' };
+      return { text: 'Riesgo muy alto', className: 'very-high' };
+    }
+
+    function calculate() {
+      let total = 0;
+      categories.forEach((category) => {
+        const selected = document.querySelector(`input[name="${category.key}"]:checked`);
+        if (selected) total += Number(selected.value);
+      });
+
+      const risk = interpret(total);
+      resultBox.className = `result-box visible ${risk.className}`;
+      resultBox.innerHTML = `
+        <div>Puntuación total: <strong>${total}</strong></div>
+        <div>Clasificación: <strong>${risk.text}</strong></div>
+      `;
+
+      if (fechaInput.value) {
+        fechaFooter.textContent = 'Fecha: ' + fechaInput.value;
+      }
+    }
+
+    function resetForm() {
+      document.querySelectorAll('input[type="radio"]').forEach((input) => input.checked = false);
+      document.querySelectorAll('.option').forEach((el) => el.classList.remove('selected'));
+      resultBox.className = 'result-box';
+      resultBox.innerHTML = '';
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', calculate);
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    fechaInput.addEventListener('change', () => {
+      if (fechaInput.value) {
+        fechaFooter.textContent = 'Fecha: ' + fechaInput.value;
+      } else {
+        fechaFooter.textContent = 'Fecha: --';
+      }
+    });
+
+    buildForm();
+    fechaInput.value = new Date().toISOString().split('T')[0];
+    fechaFooter.textContent = 'Fecha: ' + fechaInput.value;
+  </script>
+</body>
+</html>
