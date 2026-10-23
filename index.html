@@ -1,107 +1,460 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Valoración de riesgo (6 categorías)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escala de Braden</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 700px; }
-    h1 { margin-bottom: 0.2rem; }
-    .category { margin: 0.6rem 0; display:flex; align-items:center; gap:1rem; }
-    label { flex: 1; }
-    select { width: 5rem; padding: 0.25rem; }
-    .result { margin-top: 1rem; padding: 1rem; border-radius: 6px; }
-    .no-risk { background:#e6ffea; border:1px solid #7bd389; color:#0f6b2e; }
-    .low { background:#fff9e6; border:1px solid #ffd36b; color:#7a5b00; }
-    .moderate { background:#fff0e6; border:1px solid #ffb28a; color:#8a3b00; }
-    .high { background:#ffe6e6; border:1px solid #ff8a8a; color:#7a1d1d; }
-    .very-high { background:#ffdfe6; border:1px solid #ff6b9a; color:#6b1037; }
-    button { padding: 0.5rem 1rem; font-size: 1rem; margin-top: 0.6rem; }
-    .note { font-size:0.9rem; color:#555; margin-top:0.6rem; }
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --primary: #1f6feb;
+      --primary-dark: #164fa3;
+      --text: #1d2a36;
+      --muted: #5f6f7f;
+      --border: #dfe7f1;
+      --shadow: 0 14px 35px rgba(17, 57, 103, 0.12);
+      --danger: #d93025;
+      --danger-soft: #ffe3e1;
+      --warning: #f39c12;
+      --warning-soft: #fff0d6;
+      --yellow: #f5c542;
+      --yellow-soft: #fff5cc;
+      --green: #26a65b;
+      --green-soft: #def5e8;
+      --blue: #dfeeff;
+      --blue-border: #7aaef7;
+      --blue-text: #1d4e89;
+      --title: linear-gradient(90deg, #0d5bd7, #5aa6ff, #0d5bd7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #edf4ff 0%, #f7f9fc 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .container {
+      width: min(900px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 28px 24px 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: 1px;
+      font-weight: 800;
+      background: var(--title);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      text-shadow: 0 6px 12px rgba(29, 78, 137, 0.15);
+    }
+
+    .intro {
+      margin: 8px auto 0;
+      font-size: 1rem;
+      max-width: 700px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .categories {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .category-card {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px;
+      padding: 18px 18px 16px;
+      transition: 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(31, 111, 235, 0.08);
+    }
+
+    .category-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .category-label {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .selector-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 10px 38px 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235f6f7f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center/12px 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 90px;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
+    }
+
+    .description {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #eef5ff;
+      border: 1px solid #d7e7ff;
+      color: var(--primary-dark);
+      font-size: 0.96rem;
+      line-height: 1.5;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 26px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      padding: 14px 26px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+
+    .btn-calc {
+      background: linear-gradient(135deg, var(--primary), #5fa7ff);
+      color: white;
+      box-shadow: 0 10px 20px rgba(31, 111, 235, 0.22);
+    }
+
+    .btn-reset {
+      background: #eef3fb;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .result {
+      display: none;
+      margin-top: 24px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      padding: 18px 18px;
+      text-align: center;
+      font-size: 1.02rem;
+      line-height: 1.6;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .result.visible { display: block; }
+
+    .result.no-risk {
+      background: var(--blue);
+      border-color: var(--blue-border);
+      color: var(--blue-text);
+    }
+
+    .result.low {
+      background: var(--green-soft);
+      border-color: #7dd3a8;
+      color: #1f6b42;
+    }
+
+    .result.moderate {
+      background: var(--yellow-soft);
+      border-color: #f0d06a;
+      color: #7a5600;
+    }
+
+    .result.high {
+      background: var(--warning-soft);
+      border-color: #f7bf4e;
+      color: #915400;
+    }
+
+    .result.very-high {
+      background: var(--danger-soft);
+      border-color: #f0a09a;
+      color: #8d1f17;
+    }
+
+    .legend {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .legend strong { color: var(--text); }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .chip.no-risk { background: var(--blue); border-color: var(--blue-border); color: var(--blue-text); }
+    .chip.low { background: var(--green-soft); border-color: #7dd3a8; color: #1f6b42; }
+    .chip.moderate { background: var(--yellow-soft); border-color: #f0d06a; color: #7a5600; }
+    .chip.high { background: var(--warning-soft); border-color: #f7bf4e; color: #915400; }
+    .chip.very-high { background: var(--danger-soft); border-color: #f0a09a; color: #8d1f17; }
+
+    @media (max-width: 560px) {
+      .container { padding: 20px 14px 18px; }
+      .category-top { align-items: flex-start; }
+      .selector-wrap { width: 100%; justify-content: space-between; }
+      select { flex: 1; }
+    }
   </style>
 </head>
 <body>
-  <h1>Valoración de riesgo</h1>
-  <p>Valora cada categoría de 1 (peor) a 4 (mejor).</p>
-
-  <div id="form">
-    <div class="category">
-      <label for="c1">1. Percepción sensorial</label>
-      <select id="c1" aria-label="Percepción sensorial">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
+  <div class="container">
+    <div class="header">
+      <h1>Escala de Braden</h1>
+      <p class="intro">Valoración del riesgo de úlceras por presión. Cada categoría se puntúa y el total indica el nivel de riesgo.</p>
     </div>
 
-    <div class="category">
-      <label for="c2">2. Exposición a la humedad</label>
-      <select id="c2" aria-label="Exposición a la humedad">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
+    <div id="categories" class="categories"></div>
+
+    <div class="actions">
+      <button id="calcBtn" class="btn-calc" type="button">Calcular riesgo</button>
+      <button id="resetBtn" class="btn-reset" type="button">Reiniciar</button>
     </div>
 
-    <div class="category">
-      <label for="c3">3. Nivel de actividad</label>
-      <select id="c3" aria-label="Nivel de actividad">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
+    <div id="result" class="result"></div>
+
+    <div class="legend">
+      <strong>Interpretación:</strong>
+      <div class="legend-row">
+        <span class="chip no-risk">19–23: Sin riesgo</span>
+        <span class="chip low">15–18: Riesgo leve</span>
+        <span class="chip moderate">13–14: Riesgo moderado</span>
+        <span class="chip high">10–12: Riesgo alto</span>
+        <span class="chip very-high">9 o menos: Riesgo muy alto</span>
+      </div>
     </div>
-
-    <div class="category">
-      <label for="c4">4. Movilidad</label>
-      <select id="c4" aria-label="Movilidad">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
-    </div>
-
-    <div class="category">
-      <label for="c5">5. Estado nutricional</label>
-      <select id="c5" aria-label="Estado nutricional">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
-    </div>
-
-    <div class="category">
-      <label for="c6">6. Fricción y cizalla</label>
-      <select id="c6" aria-label="Fricción y cizalla">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-      </select>
-    </div>
-
-    <button id="calcBtn">Calcular</button>
-
-    <div id="output" class="result" style="display:none"></div>
-
-    <p class="note">Rangos de interpretación proporcionados: 19–23 no hay riesgo; 15–18 riesgo leve; 13–14 riesgo moderado; 10–12 riesgo alto; ≤9 riesgo muy alto.</p>
-    <p class="note">Observación: 6 categorías × 4 puntos = máximo 24; si obtienes 24 se mostrará "No hay riesgo". Si deseas que el máximo sea 23, puedo ajustar la escala.</p>
   </div>
 
   <script>
-    function interpretar(total) {
-      // Usamos exactamente los rangos que indicaste.
-      if (total >= 19 && total <= 23) return {text: "No hay riesgo", cls: "no-risk"};
-      if (total >= 15 && total <= 18) return {text: "Riesgo leve", cls: "low"};
-      if (total >= 13 && total <= 14) return {text: "Riesgo moderado", cls: "moderate"};
-      if (total >= 10 && total <= 12) return {text: "Riesgo alto", cls: "high"};
-      if (total <= 9) return {text: "Riesgo muy alto", cls: "very-high"};
-      // Si total == 24 (por la discrepancia) lo tratamos como "No hay riesgo"
-      if (total === 24) return {text: "No hay riesgo", cls: "no-risk"};
-      return {text: "No clasificado", cls: ""};
+    const categories = [
+      {
+        label: '1. Percepción sensorial',
+        key: 'sensory',
+        max: 4,
+        descriptions: {
+          1: 'Completamente limitada',
+          2: 'Muy limitada',
+          3: 'Ligeramente limitada',
+          4: 'Sin limitaciones'
+        }
+      },
+      {
+        label: '2. Exposición a la humedad',
+        key: 'humidity',
+        max: 4,
+        descriptions: {
+          1: 'Constantemente húmedo',
+          2: 'Muy húmedo',
+          3: 'Ligeramente húmedo',
+          4: 'Raramente húmedo'
+        }
+      },
+      {
+        label: '3. Nivel de actividad',
+        key: 'activity',
+        max: 4,
+        descriptions: {
+          1: 'Encamado',
+          2: 'En silla',
+          3: 'Camina con ayuda',
+          4: 'Camina libremente'
+        }
+      },
+      {
+        label: '4. Movilidad',
+        key: 'mobility',
+        max: 4,
+        descriptions: {
+          1: 'Completamente inmóvil',
+          2: 'Muy limitado',
+          3: 'Ligeramente limitado',
+          4: 'Sin limitaciones'
+        }
+      },
+      {
+        label: '5. Estado nutricional',
+        key: 'nutrition',
+        max: 4,
+        descriptions: {
+          1: 'Muy pobre',
+          2: 'Probablemente inadecuada',
+          3: 'Adecuada',
+          4: 'Excelente'
+        }
+      },
+      {
+        label: '6. Fricción y cizalla',
+        key: 'friction',
+        max: 3,
+        descriptions: {
+          1: 'Requiere ayuda para moverse',
+          2: 'Se mueve débilmente y necesita ayuda',
+          3: 'Se moviliza de forma independiente'
+        }
+      }
+    ];
+
+    const categoriesContainer = document.getElementById('categories');
+    const resultBox = document.getElementById('result');
+
+    function buildCategories() {
+      categories.forEach((category) => {
+        const card = document.createElement('div');
+        card.className = 'category-card';
+
+        const top = document.createElement('div');
+        top.className = 'category-top';
+
+        const label = document.createElement('p');
+        label.className = 'category-label';
+        label.textContent = category.label;
+
+        const selectorWrap = document.createElement('div');
+        selectorWrap.className = 'selector-wrap';
+
+        const select = document.createElement('select');
+        select.dataset.key = category.key;
+
+        for (let i = 1; i <= category.max; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          select.appendChild(option);
+        }
+
+        select.value = Math.min(1, category.max);
+        selectorWrap.appendChild(select);
+
+        const description = document.createElement('div');
+        description.className = 'description';
+        description.textContent = category.descriptions[select.value];
+
+        select.addEventListener('change', () => {
+          description.textContent = category.descriptions[select.value] || 'Sin descripción';
+        });
+
+        top.appendChild(label);
+        top.appendChild(selectorWrap);
+        card.appendChild(top);
+        card.appendChild(description);
+        categoriesContainer.appendChild(card);
+      });
     }
 
-    document.getElementById('calcBtn').addEventListener('click', function() {
-      const vals = [1,2,3,4,5,6].map(i => {
-        return parseInt(document.getElementById('c' + i).value, 10) || 0;
-      });
-      const total = vals.reduce((a,b)=>a+b,0);
-      const interp = interpretar(total);
-      const out = document.getElementById('output');
-      out.style.display = 'block';
-      out.className = 'result ' + interp.cls;
-      out.innerHTML = '<strong>Puntuación total:</strong> ' + total + '<br/><strong>Interpretación:</strong> ' + interp.text;
-    });
+    function interpretRisk(total) {
+      if (total >= 19 && total <= 23) return { text: 'No hay riesgo', className: 'no-risk' };
+      if (total >= 15 && total <= 18) return { text: 'Riesgo leve', className: 'low' };
+      if (total >= 13 && total <= 14) return { text: 'Riesgo moderado', className: 'moderate' };
+      if (total >= 10 && total <= 12) return { text: 'Riesgo alto', className: 'high' };
+      return { text: 'Riesgo muy alto', className: 'very-high' };
+    }
 
-    // Inicializa valores por defecto (todos 1) — opcional: poner 4 para valores buenos
-    (function init(){ /* deja por defecto */ })();
+    function calculateRisk() {
+      let total = 0;
+      categories.forEach((category) => {
+        const value = Number(document.querySelector(`select[data-key="${category.key}"]`)?.value || 0);
+        total += value;
+      });
+
+      const risk = interpretRisk(total);
+      resultBox.className = `result visible ${risk.className}`;
+      resultBox.innerHTML = `<div>Puntuación total: <strong>${total}</strong></div><div>Clasificación: <strong>${risk.text}</strong></div>`;
+    }
+
+    function resetForm() {
+      document.querySelectorAll('select').forEach((select) => {
+        select.value = '1';
+      });
+
+      document.querySelectorAll('.description').forEach((desc, index) => {
+        const key = categories[index].key;
+        const select = document.querySelector(`select[data-key="${key}"]`);
+        desc.textContent = categories[index].descriptions[select.value];
+      });
+
+      resultBox.className = 'result';
+      resultBox.textContent = '';
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', calculateRisk);
+    document.getElementById('resetBtn').addEventListener('click', resetForm);
+
+    buildCategories();
+    resetForm();
   </script>
 </body>
 </html>
