@@ -366,6 +366,32 @@
     .chip.high { background: var(--orange-soft); border-color: var(--orange-border); color: var(--orange-text); }
     .chip.very-high { background: var(--red-soft); border-color: var(--red-border); color: var(--red-text); }
 
+    .bibliografia {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--ink);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .bibliografia h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .bibliografia p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .bibliografia a {
+      color: var(--primary);
+      text-decoration: underline;
+      word-break: break-word;
+    }
+
     @media print {
       body {
         background: #fff;
@@ -460,6 +486,17 @@
       <div class="footer-note">
         <span><strong>Realizada por:</strong> <span id="nombreEvaluador">--</span></span>
         <span id="fechaFooter">Fecha: --</span>
+      </div>
+
+      <div class="bibliografia">
+        <h3>Bibliografía</h3>
+        <p>
+          Instituto Nacional de Geriatría. (2020). <em>Guía de instrumentos de evaluación geriátrica integral</em>.
+          Secretaría de Salud.
+          <a href="https://www.gob.mx/cms/uploads/attachment/file/814340/Guia_InstrumentosGeriatrica_18-02-2020.pdf" target="_blank" rel="noopener noreferrer">
+            https://www.gob.mx/cms/uploads/attachment/file/814340/Guia_InstrumentosGeriatrica_18-02-2020.pdf
+          </a>
+        </p>
       </div>
     </div>
   </div>
